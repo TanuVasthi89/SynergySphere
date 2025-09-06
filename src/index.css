@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Professional Project Management Design System */
+
 
 @layer base {
   :root {
     /* Base colors - Warm, mellow tones */
-    --background: 248 250 252;
+    --background: 212 110 232;
     --foreground: 71 85 105;
 
     /* Card system */
