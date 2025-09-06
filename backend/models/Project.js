@@ -1,14 +1,21 @@
 const mongoose = require('mongoose');
 
-const ProjectSchema = new mongoose.Schema(
+const TaskSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true },
+    projectId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Project',
+      required: false // optional - tasks can exist without a linked project
+    },
+    title: { type: String, required: true, trim: true },
+    status: { type: String, enum: ['todo', 'in-progress', 'done'], default: 'todo' },
+    dueDate: { type: Date },
+    assignee: { type: String, trim: true }, // email/username for MVP
     description: { type: String, default: '' },
-    status: { type: String, enum: ['active', 'archived'], default: 'active' },
-    members: [{ type: String, trim: true }], // keep as email/username strings for MVP
-    startDate: { type: Date, default: Date.now }
+    tags: [{ type: String }],
+    image: { type: String, default: '' } // optional URL/path for uploaded image
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Project', ProjectSchema);
+module.exports = mongoose.model('Task', TaskSchema);
