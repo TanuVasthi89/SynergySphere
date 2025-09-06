@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuthUser } from "@/hooks/useAuthUser";
 import { NavLink, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
@@ -23,7 +24,7 @@ interface SidebarProps {
 
 export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
   const location = useLocation();
-
+  const { name, email, initial } = useAuthUser();
   return (
     <>
 
@@ -92,8 +93,8 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
               U
             </div>
             <div className="flex flex-col">
-              <span className="font-semibold text-sm">User Name</span>
-              <span className="text-xs text-muted-foreground">user@email.com</span>
+              <span className="font-semibold text-sm">{name}</span>
+              <span className="text-xs text-muted-foreground">{email || "—"}</span>
             </div>
           </div>
         </div>
