@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuthUser } from "@/hooks/useAuthUser";
 import { NavLink, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
@@ -23,7 +24,7 @@ interface SidebarProps {
 
 export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
   const location = useLocation();
-
+  const { name, email, initial } = useAuthUser();
   return (
     <>
 
