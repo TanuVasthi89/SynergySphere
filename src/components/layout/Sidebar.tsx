@@ -94,8 +94,8 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
                 U
               </div>
               <div className="flex flex-col">
-                <span className="font-semibold text-sm">User Name</span>
-                <span className="text-xs text-muted-foreground">user@email.com</span>
+                <span className="font-semibold text-sm">{name}</span>
+                <span className="text-xs text-muted-foreground">{email || "—"}</span>
               </div>
             </div>
             <Button
