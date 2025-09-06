@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+// import { Comments, Comment } from "@/components/ui/comments";
 import { Search, Filter, Grid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,8 +83,12 @@ const initialProjects: Project[] = [
   },
 ];
 
+// Removed global comments for all projects
+
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const navigate = useNavigate();
+  // Removed global comments state and handlers
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedPriority, setSelectedPriority] = useState<string>("all");
@@ -215,10 +221,7 @@ export default function Projects() {
           <ProjectCard
             key={project.id}
             project={project}
-            onClick={() => {
-              // TODO: Navigate to project detail
-              console.log("Navigate to project:", project.id);
-            }}
+            onClick={() => navigate(`/project/${project.id}`, { state: { project } })}
             onEdit={handleEdit}
             onDelete={handleDelete}
             className={viewMode === "list" ? "flex-row" : ""}
@@ -299,6 +302,7 @@ export default function Projects() {
           </form>
         </DialogContent>
       </Dialog>
+  {/* Removed global project discussion/comments section */}
     </div>
   );
 }

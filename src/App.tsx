@@ -10,6 +10,7 @@ import Settings from "./pages/Settings";
 import CreateProject from "./pages/CreateProject";
 import CreateTask from "./pages/CreateTask";
 import NotFound from "./pages/NotFound";
+import ProjectDetail from "./pages/ProjectDetail";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,11 @@ const App = () => (
           <Route path="/create-task" element={
             <DashboardLayout>
               <CreateTask />
+            </DashboardLayout>
+          } />
+          <Route path="/project/:id" element={
+            <DashboardLayout>
+              <ProjectDetail />
             </DashboardLayout>
           } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { Comments, Comment } from "@/components/ui/comments";
 import { Calendar, CheckCircle2, Clock, User, Trash2 } from "lucide-react";
 import {
   Dialog,
@@ -91,8 +92,26 @@ const statusConfig = {
   },
 };
 
+// Demo: comments for all tasks (shared)
+const initialComments: Comment[] = [];
+
 export default function MyTasks() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [comments, setComments] = useState<Comment[]>(initialComments);
+  const currentUser = "You";
+
+  const handleAddComment = (message: string, parentId?: string) => {
+    setComments(prev => [
+      ...prev,
+      {
+        id: Math.random().toString(36).slice(2),
+        author: currentUser,
+        message,
+        timestamp: new Date().toISOString(),
+        parentId,
+      },
+    ]);
+  };
   const [filter, setFilter] = useState<"all" | "todo" | "in-progress" | "done">("all");
   const [editTask, setEditTask] = useState<Task | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -343,6 +362,11 @@ export default function MyTasks() {
           </form>
         </DialogContent>
       </Dialog>
+      {/* Demo: Comments for all tasks */}
+      <div className="mt-10">
+        <h2 className="text-xl font-semibold mb-2">Task Discussion</h2>
+        <Comments comments={comments} onAdd={handleAddComment} currentUser={currentUser} />
+      </div>
     </div>
   );
 }
