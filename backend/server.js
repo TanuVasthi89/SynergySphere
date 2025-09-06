@@ -1,8 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 require('dotenv').config();
 
-// --- Schema & Model ---
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// --- Project Schema & Model ---
 const ProjectSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
@@ -16,25 +21,21 @@ const ProjectSchema = new mongoose.Schema(
 
 const Project = mongoose.model('Project', ProjectSchema);
 
-// --- Express app ---
-const app = express();
-app.use(express.json());
-
 // --- Routes ---
-const authRouter = require('./Routes/auth');
-app.use('/api/auth', authRouter);
-
-// tasks router (ensure plural)
-const tasksRouter = require('./Routes/tasks');
-app.use('/api/tasks', tasksRouter);
+try {
+  const authRouter = require('./Routes/auth');
+  app.use('/api/auth', authRouter);
+} catch (e) {
+  console.warn('Auth router not found or failed to load:', e.message);
+}
 
 // health route
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
-// Get a project by ID
+// Projects CRUD (uses :_id param correctly)
 app.get('/api/projects/:_id', async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id);
+    const project = await Project.findById(req.params._id);
     if (!project) return res.status(404).json({ error: 'Project not found' });
     res.json(project);
   } catch (err) {
@@ -42,11 +43,10 @@ app.get('/api/projects/:_id', async (req, res) => {
   }
 });
 
-// Update a project
 app.put('/api/projects/:_id', async (req, res) => {
   try {
-    const project = await Project.findByIdAndUpdate(req.params.id, req.body, {
-      new: true, // return updated doc
+    const project = await Project.findByIdAndUpdate(req.params._id, req.body, {
+      new: true,
       runValidators: true
     });
     if (!project) return res.status(404).json({ error: 'Project not found' });
@@ -56,10 +56,9 @@ app.put('/api/projects/:_id', async (req, res) => {
   }
 });
 
-// Delete a project
 app.delete('/api/projects/:_id', async (req, res) => {
   try {
-    const project = await Project.findByIdAndDelete(req.params.id);
+    const project = await Project.findByIdAndDelete(req.params._id);
     if (!project) return res.status(404).json({ error: 'Project not found' });
     res.json({ message: 'Project deleted' });
   } catch (err) {
@@ -67,8 +66,17 @@ app.delete('/api/projects/:_id', async (req, res) => {
   }
 });
 
-
-// --- Start server ---
-// connect & start
+// --- Connect & Start ---
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+const MONGO = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/synergysphere';
+
+mongoose
+  .connect(MONGO, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Mongo connected');
+    app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+  })
+  .catch((err) => {
+    console.error('Mongo connection error', err);
+    process.exit(1);
+  });
