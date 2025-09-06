@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 // Removed comments import
 import { Calendar, CheckCircle2, Clock, User, Trash2 } from "lucide-react";
 import {
@@ -96,6 +96,25 @@ const statusConfig = {
 
 export default function MyTasks() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+
+  useEffect(() => {
+    const localTasks = JSON.parse(localStorage.getItem("tasks") || "null");
+    if (Array.isArray(localTasks) && localTasks.length > 0) {
+      setTasks(localTasks.map((t, idx) => ({
+        id: t.id || (t.name ? t.name + idx : idx + 1 + ""),
+        title: t.name || t.title || "Untitled",
+        description: t.description || "",
+        status: t.status || "todo",
+        priority: t.priority || "medium",
+        deadline: t.deadline || "",
+        projectName: t.project || t.projectName || "",
+        assignee: t.assignee || "",
+        tags: t.tags || [],
+        image: t.image || null,
+        imageName: t.imageName || null,
+      })));
+    }
+  }, []);
   // Removed comments state and handler
   const [filter, setFilter] = useState<"all" | "todo" | "in-progress" | "done">("all");
   const [editTask, setEditTask] = useState<Task | null>(null);
@@ -137,20 +156,26 @@ export default function MyTasks() {
   const handleEditSave = (e: React.FormEvent) => {
     e.preventDefault();
     if (editTask) {
-      setTasks((prev) =>
-        prev.map((t) =>
+      setTasks((prev) => {
+        const updated = prev.map((t) =>
           t.id === editTask.id
             ? { ...t, ...editForm, priority: editForm.priority as Priority, status: editForm.status as Task["status"] }
             : t
-        )
-      );
+        );
+        localStorage.setItem("tasks", JSON.stringify(updated));
+        return updated;
+      });
     }
     setIsEditOpen(false);
     setEditTask(null);
   };
 
   const handleDelete = (task: Task) => {
-    setTasks((prev) => prev.filter((t) => t.id !== task.id));
+    setTasks((prev) => {
+      const updated = prev.filter((t) => t.id !== task.id);
+      localStorage.setItem("tasks", JSON.stringify(updated));
+      return updated;
+    });
   };
 
   return (

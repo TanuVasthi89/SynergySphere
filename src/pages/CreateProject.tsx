@@ -51,9 +51,28 @@ export default function CreateProject() {
   };
 
   const handleSubmit = () => {
-    // TODO: Handle form submission
-    console.log("Project data:", formData);
-    navigate("/");
+    // Save project to localStorage
+    const saveProject = (imageBase64: string | null) => {
+      const existingProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+      const { image, ...rest } = formData;
+      const projectToSave = {
+        ...rest,
+        image: imageBase64,
+        imageName: image ? image.name : null,
+        createdAt: new Date().toISOString(),
+      };
+      localStorage.setItem("projects", JSON.stringify([...existingProjects, projectToSave]));
+      navigate("/");
+    };
+    if (formData.image) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        saveProject(e.target?.result as string);
+      };
+      reader.readAsDataURL(formData.image);
+    } else {
+      saveProject(null);
+    }
   };
 
   const handleDiscard = () => {
@@ -77,7 +96,7 @@ export default function CreateProject() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Project Create/Edit View</h1>
+          <h1 className="text-3xl font-bold text-foreground">Create Project</h1>
           <p className="text-muted-foreground mt-1">Create a new project for your team</p>
         </div>
       </div>

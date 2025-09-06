@@ -57,9 +57,28 @@ export default function CreateTask() {
   };
 
   const handleSubmit = () => {
-    // TODO: Handle form submission
-    console.log("Task data:", formData);
-    navigate("/my-tasks");
+    // Save task to localStorage
+    const saveTask = (imageBase64: string | null) => {
+      const existingTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+      const { image, ...rest } = formData;
+      const taskToSave = {
+        ...rest,
+        image: imageBase64,
+        imageName: image ? image.name : null,
+        createdAt: new Date().toISOString(),
+      };
+      localStorage.setItem("tasks", JSON.stringify([...existingTasks, taskToSave]));
+      navigate("/my-tasks");
+    };
+    if (formData.image) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        saveTask(e.target?.result as string);
+      };
+      reader.readAsDataURL(formData.image);
+    } else {
+      saveTask(null);
+    }
   };
 
   const handleDiscard = () => {
@@ -83,7 +102,7 @@ export default function CreateTask() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Task Create/Edit View</h1>
+          <h1 className="text-3xl font-bold text-foreground">Create Task</h1>
           <p className="text-muted-foreground mt-1">Create a new task and assign it to a team member</p>
         </div>
       </div>

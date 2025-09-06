@@ -17,8 +17,13 @@ const navigation = [
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
-export function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+// Accept isCollapsed and setIsCollapsed as props
+interface SidebarProps {
+  isCollapsed: boolean;
+  setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
   const location = useLocation();
 
   return (
@@ -83,18 +88,15 @@ export function Sidebar() {
             })}
           </nav>
 
-          {/* Add Project Button */}
-          <div className="p-4 border-t border-border">
-            <Button 
-              variant="primary"
-              className="w-full justify-start"
-              onClick={() => {
-                window.location.href = "/create-project";
-              }}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add New Project
-            </Button>
+          {/* User Info Section */}
+          <div className="p-4 border-t border-border flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg">
+              U
+            </div>
+            <div className="flex flex-col">
+              <span className="font-semibold text-sm">User Name</span>
+              <span className="text-xs text-muted-foreground">user@email.com</span>
+            </div>
           </div>
         </div>
       </div>

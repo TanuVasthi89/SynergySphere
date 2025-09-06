@@ -70,97 +70,6 @@ export default function Settings() {
         </div>
       </Card>
 
-      {/* Notifications */}
-      <Card className="p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Bell className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold">Notifications</h2>
-        </div>
-        
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium">Email Notifications</h3>
-              <p className="text-sm text-muted-foreground">
-                Receive email updates about project activities
-              </p>
-            </div>
-            <Button variant="outline" size="sm">
-              Configure
-            </Button>
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium">Task Reminders</h3>
-              <p className="text-sm text-muted-foreground">
-                Get notified about upcoming deadlines
-              </p>
-            </div>
-            <Button variant="outline" size="sm">
-              Configure
-            </Button>
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium">Team Updates</h3>
-              <p className="text-sm text-muted-foreground">
-                Stay informed about team member activities
-              </p>
-            </div>
-            <Button variant="outline" size="sm">
-              Configure
-            </Button>
-          </div>
-        </div>
-      </Card>
-
-      {/* Security */}
-      <Card className="p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Shield className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold">Security</h2>
-        </div>
-        
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium">Change Password</h3>
-              <p className="text-sm text-muted-foreground">
-                Update your account password
-              </p>
-            </div>
-            <Button variant="outline" size="sm">
-              Change
-            </Button>
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium">Two-Factor Authentication</h3>
-              <p className="text-sm text-muted-foreground">
-                Add an extra layer of security to your account
-              </p>
-            </div>
-            <Button variant="outline" size="sm">
-              Enable
-            </Button>
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium">Active Sessions</h3>
-              <p className="text-sm text-muted-foreground">
-                Manage devices that have access to your account
-              </p>
-            </div>
-            <Button variant="outline" size="sm">
-              Manage
-            </Button>
-          </div>
-        </div>
-      </Card>
 
       {/* Appearance */}
       <Card className="p-6">
@@ -188,20 +97,6 @@ export default function Settings() {
             </select>
           </div>
           
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium">Language</h3>
-              <p className="text-sm text-muted-foreground">
-                Select your preferred language
-              </p>
-            </div>
-            <select className="px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
-              <option>English</option>
-              <option>Spanish</option>
-              <option>French</option>
-              <option>German</option>
-            </select>
-          </div>
         </div>
       </Card>
     </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // import { Comments, Comment } from "@/components/ui/comments";
 import { Search, Filter, Grid, List } from "lucide-react";
@@ -87,6 +87,25 @@ const initialProjects: Project[] = [
 
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>(initialProjects);
+
+  useEffect(() => {
+    const localProjects = JSON.parse(localStorage.getItem("projects") || "null");
+    if (Array.isArray(localProjects) && localProjects.length > 0) {
+      // Map localStorage format to ProjectCard format if needed
+      setProjects(localProjects.map((p, idx) => ({
+        id: p.id || (p.name ? p.name + idx : idx + 1 + ""),
+        title: p.name || p.title || "Untitled",
+        description: p.description || "",
+        priority: p.priority || "medium",
+        deadline: p.deadline || "",
+        manager: p.projectManager || p.manager || "",
+        tags: p.tags || [],
+        progress: p.progress || 0,
+        image: p.image || null,
+        imageName: p.imageName || null,
+      })));
+    }
+  }, []);
   const navigate = useNavigate();
   // Removed global comments state and handlers
   const [searchQuery, setSearchQuery] = useState("");
@@ -94,7 +113,7 @@ export default function Projects() {
   const [selectedPriority, setSelectedPriority] = useState<string>("all");
   const [editProject, setEditProject] = useState<Project | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [editForm, setEditForm] = useState({ title: "", description: "", deadline: "", priority: "medium" });
+  const [editForm, setEditForm] = useState({ title: "", description: "", deadline: "", priority: "medium", progress: 0, image: null as string | null });
   const formRef = useRef<HTMLFormElement>(null);
 
   const filteredProjects = projects.filter((project) => {
@@ -114,31 +133,57 @@ export default function Projects() {
       description: project.description,
       deadline: project.deadline,
       priority: project.priority || "medium",
+      progress: project.progress || 0,
+      image: project.image || null,
     });
     setIsEditOpen(true);
   };
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+    const { name, value, type } = e.target;
+    if (name === "progress") {
+      let val = Math.max(0, Math.min(100, Number(value)));
+      setEditForm({ ...editForm, progress: val });
+    } else {
+      setEditForm({ ...editForm, [name]: value });
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setEditForm((prev) => ({ ...prev, image: ev.target?.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleEditSave = (e: React.FormEvent) => {
     e.preventDefault();
     if (editProject) {
-      setProjects((prev) =>
-        prev.map((p) =>
+      setProjects((prev) => {
+        const updated = prev.map((p) =>
           p.id === editProject.id
-            ? { ...p, ...editForm, priority: editForm.priority as Priority }
+            ? { ...p, ...editForm, priority: editForm.priority as Priority, progress: Number(editForm.progress), image: editForm.image }
             : p
-        )
-      );
+        );
+        // Save to localStorage
+        localStorage.setItem("projects", JSON.stringify(updated));
+        return updated;
+      });
     }
     setIsEditOpen(false);
     setEditProject(null);
   };
 
   const handleDelete = (project: Project) => {
-    setProjects((prev) => prev.filter((p) => p.id !== project.id));
+    setProjects((prev) => {
+      const updated = prev.filter((p) => p.id !== project.id);
+      localStorage.setItem("projects", JSON.stringify(updated));
+      return updated;
+    });
   };
 
   return (
@@ -290,6 +335,31 @@ export default function Projects() {
                 className="w-full border rounded px-3 py-2"
                 required
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Progress (%)</label>
+              <input
+                type="number"
+                name="progress"
+                value={editForm.progress}
+                min={0}
+                max={100}
+                onChange={handleEditChange}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full border rounded px-3 py-2"
+              />
+              {editForm.image && (
+                <img src={editForm.image} alt="Project" className="mt-2 w-full h-32 object-cover rounded" />
+              )}
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)}>
