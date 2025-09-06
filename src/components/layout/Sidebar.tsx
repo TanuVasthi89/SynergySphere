@@ -87,14 +87,26 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
           </nav>
 
           {/* User Info Section */}
-          <div className="p-4 border-t border-border flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg">
-              U
+          <div className="p-4 border-t border-border flex flex-col gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg">
+                U
+              </div>
+              <div className="flex flex-col">
+                <span className="font-semibold text-sm">User Name</span>
+                <span className="text-xs text-muted-foreground">user@email.com</span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="font-semibold text-sm">User Name</span>
-              <span className="text-xs text-muted-foreground">user@email.com</span>
-            </div>
+            <Button
+              variant="outline"
+              className="mt-3 w-full"
+              onClick={() => {
+                localStorage.removeItem('authToken');
+                window.location.href = '/';
+              }}
+            >
+              Logout
+            </Button>
           </div>
         </div>
       </div>
