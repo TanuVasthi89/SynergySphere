@@ -12,6 +12,7 @@ import CreateTask from "./pages/CreateTask";
 import NotFound from "./pages/NotFound";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
+import ProjectDetail from "./pages/ProjectDetail";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,11 @@ const App = () => (
             
               <Login />
            
+          } />
+          <Route path="/project/:id" element={
+            <DashboardLayout>
+              <ProjectDetail />
+            </DashboardLayout>
           } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

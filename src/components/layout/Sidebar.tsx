@@ -3,7 +3,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
   CheckSquare, 
-  Settings, 
   Plus,
   Menu,
   X
@@ -14,7 +13,6 @@ import { cn } from "@/lib/utils";
 const navigation = [
   { name: "Projects", href: "/", icon: LayoutDashboard },
   { name: "My Tasks", href: "/my-tasks", icon: CheckSquare },
-  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {
@@ -23,38 +21,41 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
+
+
+      {/* Sidebar */}
+      {/* Floating open button when sidebar is closed */}
+      {isCollapsed && (
         <Button
           variant="outline"
           size="icon"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="bg-card shadow-card"
+          onClick={() => setIsCollapsed(false)}
+          className="fixed top-4 left-4 z-50 bg-card shadow-card"
+          aria-label="Open sidebar"
         >
-          {isCollapsed ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          <Menu className="h-5 w-5" />
         </Button>
-      </div>
-
-      {/* Sidebar */}
+      )}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64 bg-card border-r border-border shadow-elevated transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
+          "fixed inset-y-0 left-0 z-40 w-64 bg-card border-r border-border shadow-elevated transform transition-transform duration-300 ease-in-out inset-0",
           isCollapsed ? "-translate-x-full" : "translate-x-0"
         )}
       >
         <div className="flex h-full flex-col">
           {/* Logo/Brand */}
-          <div className="flex h-16 items-center justify-between px-6 border-b border-border">
+          <div className="flex h-16 items-center px-6 border-b border-border gap-2">
             <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               SynergyHub
             </h1>
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setIsCollapsed(true)}
-              className="lg:hidden"
+              onClick={() => setIsCollapsed((prev) => !prev)}
+              className="ml-2"
+              aria-label="Toggle sidebar"
             >
-              <X className="h-4 w-4" />
+              {isCollapsed ? <Menu className="h-5 w-5" /> : <X className="h-5 w-5" />}
             </Button>
           </div>
 
@@ -96,13 +97,7 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Overlay for mobile */}
-      {!isCollapsed && (
-        <div
-          className="fixed inset-0 z-30 bg-black bg-opacity-50 lg:hidden"
-          onClick={() => setIsCollapsed(true)}
-        />
-      )}
+
     </>
   );
 }

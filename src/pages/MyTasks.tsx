@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+// Removed comments import
 import { Calendar, CheckCircle2, Clock, User, Trash2 } from "lucide-react";
 import {
   Dialog,
@@ -24,6 +25,7 @@ interface Task {
   projectName: string;
   assignee: string;
   tags: string[];
+  imageUrl?: string;
 }
 
 const initialTasks: Task[] = [
@@ -73,6 +75,20 @@ const initialTasks: Task[] = [
   },
 ];
 
+const TECH_IMAGES = [
+  'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80',
+  'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+  'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+  'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=400&q=80',
+  'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80'
+];
+
+function getImageForTask(task: Task) {
+  if (task.imageUrl) return task.imageUrl;
+  const idx = Math.abs(task.title?.charCodeAt(0) || 0) % TECH_IMAGES.length;
+  return TECH_IMAGES[idx];
+}
+
 const statusConfig = {
   todo: {
     label: "To Do",
@@ -91,8 +107,11 @@ const statusConfig = {
   },
 };
 
+// Removed comments state
+
 export default function MyTasks() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  // Removed comments state and handler
   const [filter, setFilter] = useState<"all" | "todo" | "in-progress" | "done">("all");
   const [editTask, setEditTask] = useState<Task | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -197,6 +216,7 @@ export default function MyTasks() {
 
           return (
             <Card key={task.id} className="p-6 bg-gradient-card hover:shadow-elevated transition-all duration-300 flex flex-col h-full">
+              <img src={getImageForTask(task)} alt="Task" style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '8px', marginBottom: '1rem' }} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-2">
                   <h3 className="text-lg font-semibold text-foreground truncate">
@@ -343,6 +363,7 @@ export default function MyTasks() {
           </form>
         </DialogContent>
       </Dialog>
+  {/* Removed task discussion/comments section */}
     </div>
   );
 }
