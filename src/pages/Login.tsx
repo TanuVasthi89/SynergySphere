@@ -35,7 +35,7 @@ export default function Login() {
 
       if (body.token) localStorage.setItem("token", body.token);
       if (body.user) localStorage.setItem("user", JSON.stringify(body.user));
-
+      localStorage.setItem("email", email);
       setSuccess("Signed in successfully.");
       navigate("/dashboard");
     } catch (err: any) {

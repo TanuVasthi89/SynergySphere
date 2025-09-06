@@ -115,19 +115,17 @@ export function ProjectCard({ project, onClick, className, onEdit, onDelete, onV
 
         {/* Progress bar */}
         {project.progress !== undefined && (
-          <div className="mb-4">
-            <div className="flex justify-between text-sm mb-1">
-              <span className="text-muted-foreground">Progress</span>
-              <span className="text-foreground font-medium">{project.progress}%</span>
-            </div>
-            <div className="w-full bg-accent rounded-full h-2">
+          <div className="mt-2">
+            <div className="w-full bg-gray-200 rounded-full h-2">
               <div
-                className="bg-gradient-primary h-2 rounded-full transition-all duration-300"
+                className="h-2 rounded-full bg-teal-600"
                 style={{ width: `${project.progress}%` }}
               />
             </div>
+            <span className="text-sm text-gray-600 mt-1">{project.progress}%</span>
           </div>
         )}
+
 
         {/* Footer */}
         <div className="flex items-center justify-between mt-4">
