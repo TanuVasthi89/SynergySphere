@@ -1,6 +1,6 @@
 import { Sidebar } from "./Sidebar";
 import { Footer } from "./Footer";
-import { Bell } from "lucide-react";
+import { Bell, Settings } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";

@@ -23,7 +23,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={
+          <Route path="/dashboard" element={
             <DashboardLayout>
               <Projects />
             </DashboardLayout>
@@ -53,7 +53,7 @@ const App = () => (
               <SignUp />
            
           } />
-          <Route path="/login" element={           // added route
+          <Route path="/" element={           // added route
             
               <Login />
            

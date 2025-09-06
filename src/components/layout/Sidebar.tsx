@@ -3,7 +3,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
   CheckSquare, 
-  Settings, 
   Plus,
   Menu,
   X
@@ -12,9 +11,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { name: "Projects", href: "/", icon: LayoutDashboard },
+  { name: "Projects", href: "/dashboard", icon: LayoutDashboard },
   { name: "My Tasks", href: "/my-tasks", icon: CheckSquare },
-  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 // Accept isCollapsed and setIsCollapsed as props

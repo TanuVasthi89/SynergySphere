@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { PriorityBadge, Priority } from "@/components/ui/priority-badge";
 import { Tag } from "@/components/ui/tag";
 import { cn } from "@/lib/utils";
+import React from 'react';
 
 export interface Project {
   id: string;
@@ -20,6 +21,22 @@ export interface Project {
   // tasks?: { id: string; title: string; assignedToMe: boolean }[];
 }
 
+const DEFAULT_TECH_IMAGE = 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=400&q=80';
+
+const TECH_IMAGES = [
+  'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80',
+  'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+  'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+  'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=400&q=80',
+  'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80'
+];
+
+function getImageForProject(project: Project) {
+  if (project.image) return project.image;
+  // Use project title hash to pick an image
+  const idx = Math.abs(project.title?.charCodeAt(0) || 0) % TECH_IMAGES.length;
+  return TECH_IMAGES[idx];
+}
 
 interface ProjectCardProps {
   project: Project;
@@ -33,6 +50,7 @@ interface ProjectCardProps {
 export function ProjectCard({ project, onClick, className, onEdit, onDelete, onViewTasks }: ProjectCardProps) {
   const deadlineDate = new Date(project.deadline);
   const isOverdue = deadlineDate < new Date();
+  const imageUrl = getImageForProject(project);
 
   return (
     <Card
@@ -71,15 +89,13 @@ export function ProjectCard({ project, onClick, className, onEdit, onDelete, onV
         </div>
 
         {/* Image */}
-        {project.image && (
-          <div className="mb-4 rounded-lg overflow-hidden bg-accent">
-            <img
-              src={project.image}
-              alt={project.title}
-              className="w-full h-32 object-cover"
-            />
-          </div>
-        )}
+        <div className="mb-4 rounded-lg overflow-hidden bg-accent">
+          <img
+            src={imageUrl}
+            alt={project.title}
+            className="w-full h-32 object-cover"
+          />
+        </div>
 
         {/* Tags */}
         {project.tags.length > 0 && (
