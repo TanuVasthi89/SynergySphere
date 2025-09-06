@@ -7,56 +7,56 @@
 @layer base {
   :root {
     /* Base colors - Warm, mellow tones */
-    --background: 248 250 252;
-    --foreground: 71 85 105;
+  --background: 220 15% 96%; /* #F4F5F7 - light gray */
+  --foreground: 210 29% 24%; /* #34495E - navy blue for text */
 
-    /* Card system */
-    --card: 0 0% 100%;
-    --card-foreground: 71 85 105;
+  /* Card system */
+  --card: 0 0% 100%; /* white cards */
+  --card-foreground: 210 29% 24%;
 
-    /* Popover */
-    --popover: 0 0% 100%;
-    --popover-foreground: 71 85 105;
+  /* Popover */
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 29% 24%;
 
-    /* Primary - Mellow Teal */
-    --primary: 158 64% 52%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 158 64% 62%;
+  /* Primary - Navy Blue */
+  --primary: 210 29% 24%; /* #34495E */
+  --primary-foreground: 0 0% 100%;
+  --primary-glow: 210 29% 34%;
 
-    /* Secondary - Soft Purple */
-    --secondary: 263 70% 50%;
-    --secondary-foreground: 0 0% 100%;
+  /* Secondary - Teal */
+  --secondary: 180 100% 25%; /* #008080 */
+  --secondary-foreground: 0 0% 100%;
 
-    /* Muted backgrounds */
-    --muted: 220 14% 96%;
-    --muted-foreground: 148 23% 36%;
+  /* Muted backgrounds */
+  --muted: 220 15% 90%; /* lighter gray */
+  --muted-foreground: 210 29% 24%;
 
-    /* Accent - Light Blue */
-    --accent: 199 89% 48%;
-    --accent-foreground: 0 0% 100%;
+  /* Accent - Teal */
+  --accent: 180 100% 25%; /* #008080 */
+  --accent-foreground: 0 0% 100%;
 
-    /* Status colors */
-    --success: 158 64% 52%;
-    --success-foreground: 0 0% 100%;
-    --warning: 31 81% 56%;
-    --warning-foreground: 0 0% 100%;
-    --destructive: 0 65% 51%;
-    --destructive-foreground: 0 0% 100%;
+  /* Status colors */
+  --success: 158 64% 52%;
+  --success-foreground: 0 0% 100%;
+  --warning: 49 100% 80%;
+  --warning-foreground: 0 0% 10%;
+  --destructive: 0 65% 51%;
+  --destructive-foreground: 0 0% 100%;
 
-    /* Priority colors - mellow versions */
-    --priority-low: 158 64% 52%;
-    --priority-medium: 31 81% 56%;
-    --priority-high: 14 83% 53%;
+  /* Priority colors - palette versions */
+  --priority-low: 220 15% 90%;
+  --priority-medium: 180 100% 25%;
+  --priority-high: 210 29% 24%;
 
-    /* Borders and inputs */
-    --border: 226 58% 90%;
-    --input: 226 58% 94%;
-    --ring: 224 76% 48%;
+  /* Borders and inputs */
+  --border: 220 15% 85%; /* #D3D6DB - light gray border */
+  --input: 0 0% 100%;
+  --ring: 180 100% 25%;
 
-    /* Gradients - Mellow warm tones */
-    --gradient-primary: linear-gradient(135deg, hsl(158 64% 52%), hsl(199 89% 48%));
-    --gradient-subtle: linear-gradient(135deg, hsl(220 14% 98%), hsl(199 89% 97%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(220 14% 99%));
+  /* Gradients - Professional tones */
+  --gradient-primary: linear-gradient(135deg, hsl(210 29% 24%), hsl(180 100% 25%));
+  --gradient-subtle: linear-gradient(135deg, hsl(220 15% 96%), hsl(220 15% 90%));
+  --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(220 15% 96%));
 
     /* Shadows - Soft, warm */
     --shadow-card: 0 1px 3px 0 hsl(158 64% 52% / 0.08), 0 1px 2px 0 hsl(158 64% 52% / 0.04);

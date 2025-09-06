@@ -10,7 +10,7 @@ interface PriorityBadgeProps {
 const priorityConfig = {
   low: {
     label: "Low",
-    className: "bg-priority-low text-white",
+    className: "bg-priority-low text-blue-700",
   },
   medium: {
     label: "Medium", 

@@ -1,5 +1,13 @@
-import { useState } from "react";
-import { Calendar, CheckCircle2, Clock, User } from "lucide-react";
+import { useState, useRef } from "react";
+import { Calendar, CheckCircle2, Clock, User, Trash2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PriorityBadge, Priority } from "@/components/ui/priority-badge";
@@ -18,7 +26,7 @@ interface Task {
   tags: string[];
 }
 
-const mockTasks: Task[] = [
+const initialTasks: Task[] = [
   {
     id: "1",
     title: "Design homepage mockups",
@@ -84,15 +92,61 @@ const statusConfig = {
 };
 
 export default function MyTasks() {
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [filter, setFilter] = useState<"all" | "todo" | "in-progress" | "done">("all");
+  const [editTask, setEditTask] = useState<Task | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    description: "",
+    deadline: "",
+    priority: "medium" as Priority,
+    status: "todo" as Task["status"],
+  });
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const filteredTasks = filter === "all" ? mockTasks : mockTasks.filter(task => task.status === filter);
+  const filteredTasks = filter === "all" ? tasks : tasks.filter(task => task.status === filter);
 
   const taskCounts = {
-    all: mockTasks.length,
-    todo: mockTasks.filter(t => t.status === "todo").length,
-    "in-progress": mockTasks.filter(t => t.status === "in-progress").length,
-    done: mockTasks.filter(t => t.status === "done").length,
+    all: tasks.length,
+    todo: tasks.filter(t => t.status === "todo").length,
+    "in-progress": tasks.filter(t => t.status === "in-progress").length,
+    done: tasks.filter(t => t.status === "done").length,
+  };
+
+  const handleEdit = (task: Task) => {
+    setEditTask(task);
+    setEditForm({
+      title: task.title,
+      description: task.description,
+      deadline: task.deadline,
+      priority: task.priority,
+      status: task.status,
+    });
+    setIsEditOpen(true);
+  };
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+  };
+
+  const handleEditSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editTask) {
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.id === editTask.id
+            ? { ...t, ...editForm, priority: editForm.priority as Priority, status: editForm.status as Task["status"] }
+            : t
+        )
+      );
+    }
+    setIsEditOpen(false);
+    setEditTask(null);
+  };
+
+  const handleDelete = (task: Task) => {
+    setTasks((prev) => prev.filter((t) => t.id !== task.id));
   };
 
   return (
@@ -105,7 +159,6 @@ export default function MyTasks() {
             Track your assigned tasks across all projects
           </p>
         </div>
-        
         <Button 
           variant="primary" 
           className="lg:w-auto w-full"
@@ -132,65 +185,67 @@ export default function MyTasks() {
         ))}
       </div>
 
-      {/* Tasks List */}
-      <div className="space-y-4">
+      {/* Tasks List - Responsive Grid */}
+      <div className={cn(
+        "grid gap-6",
+        "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
+      )}>
         {filteredTasks.map((task) => {
           const deadlineDate = new Date(task.deadline);
           const isOverdue = deadlineDate < new Date() && task.status !== "done";
           const StatusIcon = statusConfig[task.status].icon;
 
           return (
-            <Card key={task.id} className="p-6 bg-gradient-card hover:shadow-elevated transition-all duration-300">
-              <div className="flex items-start justify-between">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-lg font-semibold text-foreground truncate">
-                      {task.title}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={cn(
-                          "inline-flex items-center px-2 py-1 rounded-full text-xs font-medium gap-1",
-                          statusConfig[task.status].className
-                        )}
-                      >
-                        <StatusIcon className="h-3 w-3" />
-                        {statusConfig[task.status].label}
-                      </span>
-                      <PriorityBadge priority={task.priority} />
-                    </div>
+            <Card key={task.id} className="p-6 bg-gradient-card hover:shadow-elevated transition-all duration-300 flex flex-col h-full">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className="text-lg font-semibold text-foreground truncate">
+                    {task.title}
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={cn(
+                        "inline-flex items-center px-2 py-1 rounded-full text-xs font-medium gap-1",
+                        statusConfig[task.status].className
+                      )}
+                    >
+                      <StatusIcon className="h-3 w-3" />
+                      {statusConfig[task.status].label}
+                    </span>
+                    <PriorityBadge priority={task.priority} />
                   </div>
-                  
-                  <p className="text-muted-foreground mb-4">
-                    {task.description}
-                  </p>
-                  
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      <span className={cn(isOverdue && "text-destructive font-medium")}>
-                        {deadlineDate.toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <User className="h-4 w-4" />
-                      <span>{task.projectName}</span>
-                    </div>
-                  </div>
-                  
-                  {task.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-3">
-                      {task.tags.map((tag) => (
-                        <Tag key={tag} variant="secondary">
-                          {tag}
-                        </Tag>
-                      ))}
-                    </div>
-                  )}
                 </div>
-                
-                <Button variant="ghost" size="sm" className="ml-4">
+                <p className="text-muted-foreground mb-4">
+                  {task.description}
+                </p>
+                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    <span className={cn(isOverdue && "text-destructive font-medium")}> 
+                      {deadlineDate.toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <User className="h-4 w-4" />
+                    <span>{task.projectName}</span>
+                  </div>
+                </div>
+                {task.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-3">
+                    {task.tags.map((tag) => (
+                      <Tag key={tag} variant="secondary">
+                        {tag}
+                      </Tag>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-2 mt-4 self-end">
+                <Button variant="ghost" size="sm" onClick={() => handleEdit(task)}>
                   Edit
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => handleDelete(task)} className="text-destructive">
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             </Card>
@@ -209,6 +264,85 @@ export default function MyTasks() {
           </p>
         </div>
       )}
+      {/* Edit Task Modal */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Task</DialogTitle>
+            <DialogDescription>Edit the details of your task below.</DialogDescription>
+          </DialogHeader>
+          <form ref={formRef} onSubmit={handleEditSave} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Title</label>
+              <input
+                type="text"
+                name="title"
+                value={editForm.title}
+                onChange={handleEditChange}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea
+                name="description"
+                value={editForm.description}
+                onChange={handleEditChange}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Deadline</label>
+              <input
+                type="date"
+                name="deadline"
+                value={editForm.deadline}
+                onChange={handleEditChange}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Priority</label>
+              <select
+                name="priority"
+                value={editForm.priority}
+                onChange={handleEditChange}
+                className="w-full border rounded px-3 py-2"
+                required
+              >
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Status</label>
+              <select
+                name="status"
+                value={editForm.status}
+                onChange={handleEditChange}
+                className="w-full border rounded px-3 py-2"
+                required
+              >
+                <option value="todo">To Do</option>
+                <option value="in-progress">In Progress</option>
+                <option value="done">Done</option>
+              </select>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary">
+                Save
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -3,10 +3,22 @@ import { Search, Filter, Grid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProjectCard, Project } from "@/components/project/project-card";
+import type { Priority } from "@/components/ui/priority-badge";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { useRef } from "react";
 import { cn } from "@/lib/utils";
 
 // Mock data
-const mockProjects: Project[] = [
+const initialProjects: Project[] = [
   {
     id: "1",
     title: "Website Redesign",
@@ -70,19 +82,58 @@ const mockProjects: Project[] = [
 ];
 
 export default function Projects() {
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedPriority, setSelectedPriority] = useState<string>("all");
+  const [editProject, setEditProject] = useState<Project | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editForm, setEditForm] = useState({ title: "", description: "", deadline: "", priority: "medium" });
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const filteredProjects = mockProjects.filter((project) => {
+  const filteredProjects = projects.filter((project) => {
     const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
+      project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+
     const matchesPriority = selectedPriority === "all" || project.priority === selectedPriority;
-    
+
     return matchesSearch && matchesPriority;
   });
+
+  const handleEdit = (project: Project) => {
+    setEditProject(project);
+    setEditForm({
+      title: project.title,
+      description: project.description,
+      deadline: project.deadline,
+      priority: project.priority || "medium",
+    });
+    setIsEditOpen(true);
+  };
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+  };
+
+  const handleEditSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editProject) {
+      setProjects((prev) =>
+        prev.map((p) =>
+          p.id === editProject.id
+            ? { ...p, ...editForm, priority: editForm.priority as Priority }
+            : p
+        )
+      );
+    }
+    setIsEditOpen(false);
+    setEditProject(null);
+  };
+
+  const handleDelete = (project: Project) => {
+    setProjects((prev) => prev.filter((p) => p.id !== project.id));
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -168,6 +219,8 @@ export default function Projects() {
               // TODO: Navigate to project detail
               console.log("Navigate to project:", project.id);
             }}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
             className={viewMode === "list" ? "flex-row" : ""}
           />
         ))}
@@ -181,6 +234,71 @@ export default function Projects() {
           </p>
         </div>
       )}
+      {/* Edit Project Modal */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Project</DialogTitle>
+            <DialogDescription>Edit the details of your project below.</DialogDescription>
+          </DialogHeader>
+          <form ref={formRef} onSubmit={handleEditSave} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Priority</label>
+              <select
+                name="priority"
+                value={editForm.priority}
+                onChange={handleEditChange}
+                className="w-full border rounded px-3 py-2"
+                required
+              >
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Title</label>
+              <input
+                type="text"
+                name="title"
+                value={editForm.title}
+                onChange={handleEditChange}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea
+                name="description"
+                value={editForm.description}
+                onChange={handleEditChange}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Deadline</label>
+              <input
+                type="date"
+                name="deadline"
+                value={editForm.deadline}
+                onChange={handleEditChange}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary">
+                Save
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

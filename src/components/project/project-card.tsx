@@ -1,5 +1,6 @@
-import { Calendar, User, MoreHorizontal } from "lucide-react";
+import { Calendar, User, MoreHorizontal, Pencil, Trash2, List } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { PriorityBadge, Priority } from "@/components/ui/priority-badge";
 import { Tag } from "@/components/ui/tag";
@@ -15,18 +16,24 @@ export interface Project {
   tags: string[];
   image?: string;
   progress?: number;
+  // Optionally, you can add a tasks array if you want to show tasks inline
+  // tasks?: { id: string; title: string; assignedToMe: boolean }[];
 }
+
 
 interface ProjectCardProps {
   project: Project;
   onClick?: () => void;
   className?: string;
+  onEdit?: (project: Project) => void;
+  onDelete?: (project: Project) => void;
+  onViewTasks?: (project: Project) => void;
 }
 
-export function ProjectCard({ project, onClick, className }: ProjectCardProps) {
+export function ProjectCard({ project, onClick, className, onEdit, onDelete, onViewTasks }: ProjectCardProps) {
   const deadlineDate = new Date(project.deadline);
   const isOverdue = deadlineDate < new Date();
-  
+
   return (
     <Card
       className={cn(
@@ -46,9 +53,21 @@ export function ProjectCard({ project, onClick, className }: ProjectCardProps) {
               {project.description}
             </p>
           </div>
-          <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={e => { e.stopPropagation(); onEdit?.(project); }}>
+                <Pencil className="mr-2 h-4 w-4" /> Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={e => { e.stopPropagation(); onDelete?.(project); }} className="text-destructive">
+                <Trash2 className="mr-2 h-4 w-4" /> Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Image */}
@@ -95,11 +114,11 @@ export function ProjectCard({ project, onClick, className }: ProjectCardProps) {
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-4">
           <div className="flex items-center space-x-4">
             <div className="flex items-center text-sm text-muted-foreground">
               <Calendar className="mr-1 h-4 w-4" />
-              <span className={cn(isOverdue && "text-destructive font-medium")}>
+              <span className={cn(isOverdue && "text-destructive font-medium")}> 
                 {deadlineDate.toLocaleDateString()}
               </span>
             </div>
@@ -107,8 +126,11 @@ export function ProjectCard({ project, onClick, className }: ProjectCardProps) {
               <User className="mr-1 h-4 w-4" />
               <span>{project.manager}</span>
             </div>
+            {/* Removed task count UI */}
           </div>
-          <PriorityBadge priority={project.priority} />
+          <div className="flex items-center gap-2">
+            <PriorityBadge priority={project.priority} />
+          </div>
         </div>
       </div>
     </Card>
