@@ -1,38 +1,21 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 require('dotenv').config();
 
-// --- Schema & Model ---
-const ProjectSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true, trim: true },
-    description: { type: String, default: '' },
-    status: { type: String, enum: ['active', 'archived'], default: 'active' },
-    members: [{ type: String, trim: true }],
-    startDate: { type: Date, default: Date.now }
-  },
-  { timestamps: true }
-);
-
-const Project = mongoose.model('Project', ProjectSchema);
-
-// --- Express app ---
 const app = express();
+app.use(cors());
 app.use(express.json());
 
-// --- Connect to MongoDB ---
-mongoose
-  .connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 })
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => {
-    console.error('MongoDB connection error:', err.message);
-    process.exit(1);
-  });
+
+
+// --- Auth Routes
+const authRouter = require('./Routes/auth');
+app.use('/api/auth', authRouter);
 
 // --- Routes ---
-// Health check
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, mongo: mongoose.connection.readyState }); // 1 = connected
+  res.json({ ok: true, mongo: mongoose.connection.readyState });
 });
 
 // Create a project
@@ -51,6 +34,15 @@ app.get('/api/projects', async (_req, res) => {
   res.json(projects);
 });
 
-// --- Start server ---
+// --- Connect to MongoDB & Start Server ---
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+mongoose
+  .connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 })
+  .then(() => {
+    console.log('MongoDB connected');
+    app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+  })
+  .catch(err => {
+    console.error('MongoDB connection error:', err.message);
+    process.exit(1);
+  });
