@@ -31,8 +31,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="min-h-screen bg-background flex w-full">
         <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
         <main className={`flex-1 transition-all duration-300${!isSidebarCollapsed ? ' lg:ml-64' : ''}`}> 
-          {/* Notification Bell */}
-          <div className="flex justify-end items-center px-6 pt-4">
+          {/* Notification Bell and Settings */}
+          <div className="flex justify-end items-center gap-2 px-6 pt-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
@@ -59,6 +59,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
+            <Button variant="ghost" size="icon" className="ml-2" onClick={() => window.location.href = '/settings'}>
+              <Settings className="h-6 w-6" />
+            </Button>
           </div>
           {children}
         </main>

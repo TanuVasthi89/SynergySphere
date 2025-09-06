@@ -62,7 +62,7 @@ export default function CreateProject() {
         createdAt: new Date().toISOString(),
       };
       localStorage.setItem("projects", JSON.stringify([...existingProjects, projectToSave]));
-      navigate("/");
+      navigate("/dashboard");
     };
     if (formData.image) {
       const reader = new FileReader();

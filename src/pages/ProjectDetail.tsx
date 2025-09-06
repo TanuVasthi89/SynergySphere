@@ -172,7 +172,6 @@ export default function ProjectDetail() {
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-1">Tasks</h2>
           <p className="text-muted-foreground mb-4">Manage tasks for the Website Redesign project.</p>
-          <Button variant="secondary" className="mb-6 flex items-center gap-2"><span className="text-lg">+</span> Add Task</Button>
           <div className="space-y-4">
             {mockTasks.map(task => (
               <div key={task.id} className="bg-background rounded-xl border border-border p-5 flex items-center justify-between shadow-sm">
