@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { UserPlus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,8 @@ type FormState = {
 };
 
 export default function SignUp() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState<FormState>({
     username: "",
     password: "",
@@ -52,6 +55,7 @@ export default function SignUp() {
 
     setLoading(true);
     try {
+      // Create account
       const res = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -61,7 +65,28 @@ export default function SignUp() {
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body?.message || `Signup failed (${res.status})`);
 
-      setSuccess("Account created successfully.");
+      // Attempt auto-login
+      const loginRes = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email, password: form.password }),
+      });
+
+      if (loginRes.ok) {
+        const loginBody = await loginRes.json();
+        if (loginBody.token) {
+          localStorage.setItem("token", loginBody.token);
+        }
+        if (loginBody.user) {
+          localStorage.setItem("user", JSON.stringify(loginBody.user));
+        }
+        // navigate to dashboard (root)
+        navigate("/");
+        return;
+      }
+
+      // If auto-login failed, show success and instruct to login
+      setSuccess("Account created. Please sign in.");
       setForm({ username: "", password: "", email: "", jobTitle: "", department: "" });
     } catch (err: any) {
       setError(err.message || "Signup error");
