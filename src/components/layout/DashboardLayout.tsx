@@ -1,5 +1,5 @@
 import { Sidebar } from "./Sidebar";
-import { Bell } from "lucide-react";
+import { Bell, Settings } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -27,8 +27,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="min-h-screen bg-background flex w-full">
       <Sidebar />
       <main className="flex-1 lg:ml-64">
-        {/* Notification Bell */}
-        <div className="flex justify-end items-center px-6 pt-4">
+        {/* Notification Bell & Settings Icon */}
+        <div className="flex justify-end items-center gap-4 px-6 pt-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
@@ -55,6 +55,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Button variant="ghost" size="icon" aria-label="Settings" onClick={() => window.location.href = "/settings"}>
+            <Settings className="h-6 w-6" />
+          </Button>
         </div>
         {children}
       </main>

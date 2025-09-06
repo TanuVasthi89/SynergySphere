@@ -10,7 +10,8 @@ const TaskSchema = new mongoose.Schema(
     title: { type: String, required: true, trim: true },
     status: { type: String, enum: ['todo', 'in-progress', 'done'], default: 'todo' },
     dueDate: { type: Date },
-    assignee: { type: String, trim: true } // email/username for MVP
+    assignee: { type: String, trim: true }, // email/username for MVP
+    imageUrl: { type: String, default: '' }
   },
   { timestamps: true }
 );

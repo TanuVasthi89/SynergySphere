@@ -3,7 +3,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
   CheckSquare, 
-  Settings, 
   Plus,
   Menu,
   X
@@ -14,7 +13,6 @@ import { cn } from "@/lib/utils";
 const navigation = [
   { name: "Projects", href: "/", icon: LayoutDashboard },
   { name: "My Tasks", href: "/my-tasks", icon: CheckSquare },
-  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {

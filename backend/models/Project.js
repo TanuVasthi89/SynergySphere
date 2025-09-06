@@ -6,7 +6,8 @@ const ProjectSchema = new mongoose.Schema(
     description: { type: String, default: '' },
     status: { type: String, enum: ['active', 'archived'], default: 'active' },
     members: [{ type: String, trim: true }], // keep as email/username strings for MVP
-    startDate: { type: Date, default: Date.now }
+    startDate: { type: Date, default: Date.now },
+    imageUrl: { type: String, default: '' }
   },
   { timestamps: true }
 );
